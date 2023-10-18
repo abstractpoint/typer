@@ -1,0 +1,79 @@
+<html>
+<head>
+    <title>Scratch 6</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #app {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 100px;
+            color: white
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // initial setup
+            let expectedLetter = 'a';
+            let startTime = null;
+            let endTime = null;
+            let bestTime = null;
+            const appNode = document.getElementById('app');
+            const textNode = document.getElementById('text'); // replace 'yourTextNodeId' with your actual id
+
+            // helper function to update the background color
+            function updateBackgroundColor(color) {
+                appNode.style.backgroundColor = color;
+            }
+
+            // helper function to calculate and update the best time
+            function calculateAndUpdateBestTime() {
+                const totalTime = (endTime - startTime) / 1000; // convert to seconds
+                const averageTime = totalTime / 26; // 'z' - 'a' = 26 letters
+
+                if (bestTime === null || averageTime < bestTime) {
+                    bestTime = averageTime;
+                    textNode.textContent = `${bestTime.toFixed(2)}`;
+                }
+            }
+
+            // keydown event listener
+            document.addEventListener('keydown', function (event) {
+                const key = event.key.toLowerCase();
+
+                // check if the key is a letter and within the range 'a' - 'z'
+                if (key >= 'a' && key <= 'z') {
+                    if (key === expectedLetter) {
+                        updateBackgroundColor('green');
+
+                        if (expectedLetter === 'a') {
+                            startTime = new Date().getTime(); // start the timer
+                        } else if (expectedLetter === 'z') {
+                            endTime = new Date().getTime(); // end the timer
+                            calculateAndUpdateBestTime();
+                        }
+
+                        // move to the next letter, or wrap around to 'a' if we're at 'z'
+                        expectedLetter = String.fromCharCode((expectedLetter.charCodeAt(0) - 96) % 26 + 97); // get next letter
+                    } else {
+                        updateBackgroundColor('red');
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="app">
+        <div id="text">0.0</div>
+    </div>
+</body>
+</html>
